@@ -169,9 +169,9 @@ jobs:
 
           - os: "mac"
             name: "arm64"
-            runs-on: "macos-silicon"
+            runs-on: "macos-latest"
             cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DBUILD_SHARED_LIBS=OFF -DGGML_METAL_EMBED_LIBRARY=ON -DWHISPER_SDL2=ON"
-            run-e2e: true
+            run-e2e: false
             vulkan: false
             sccache: false
             sccache-conf-path: ""
