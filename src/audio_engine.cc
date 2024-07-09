@@ -272,7 +272,8 @@ bool AudioEngine::LoadModelImpl(std::shared_ptr<Json::Value> json_body) {
   }
 
   server_map_[model_id].ctx.model_id = model_id;
-  auto is_success = server_map_[model_id].ctx.LoadModel(model_path.asString());
+  auto model_path_str = model_path.asString();
+  auto is_success = server_map_[model_id].ctx.LoadModel(model_path_str);
   if (!is_success) {
     LOG_ERROR << "Could not load model: " << model_path.asString();
     server_map_.erase(model_id);
