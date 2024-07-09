@@ -155,6 +155,7 @@ int main(int argc, char** argv) {
     resp.set_header("Access-Control-Allow-Origin",
                     req.get_header_value("Origin"));
     auto req_body = std::make_shared<Json::Value>();
+    LOG_INFO << "handle_transcriptions";
     for (auto [id, f] : req.files) {
       LOG_INFO << id;
       if (id == "file") {
