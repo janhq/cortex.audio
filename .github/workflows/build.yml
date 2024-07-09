@@ -62,7 +62,7 @@ jobs:
           - os: "linux"
             name: "amd64-avx2"
             runs-on: "ubuntu-20-04"
-            cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_NATIVE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE='Release' -GNinja"
+            cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DGGML_NATIVE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE='Release' -GNinja"
             run-e2e: true
             vulkan: false
             sccache: false
@@ -71,7 +71,7 @@ jobs:
           - os: "linux"
             name: "amd64-noavx"
             runs-on: "ubuntu-20-04"
-            cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_AVX=OFF -DGGML_AVX2=OFF -DGGML_FMA=OFF -DGGML_NATIVE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE='Release' -GNinja"
+            cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DGGML_AVX=OFF -DGGML_AVX2=OFF -DGGML_FMA=OFF -DGGML_NATIVE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE='Release' -GNinja"
             run-e2e: false
             vulkan: false
             sccache: false
@@ -80,7 +80,7 @@ jobs:
           - os: "linux"
             name: "amd64-avx"
             runs-on: "ubuntu-20-04"
-            cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_AVX2=OFF -DGGML_NATIVE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE='Release' -GNinja"
+            cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DGGML_AVX2=OFF -DGGML_NATIVE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE='Release' -GNinja"
             run-e2e: false
             vulkan: false
             sccache: false
@@ -89,7 +89,7 @@ jobs:
           - os: "linux"
             name: "amd64-avx512"
             runs-on: "ubuntu-20-04"
-            cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_AVX512=ON -DGGML_NATIVE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE='Release' -GNinja"
+            cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DGGML_AVX512=ON -DGGML_NATIVE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE='Release' -GNinja"
             run-e2e: false
             vulkan: false
             sccache: false
@@ -98,7 +98,7 @@ jobs:
           - os: "linux"
             name: "amd64-vulkan"
             runs-on: "ubuntu-20-04-cuda-11-7"
-            cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_VULKAN=ON -DGGML_NATIVE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE='Release' -GNinja"
+            cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DGGML_VULKAN=ON -DGGML_NATIVE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE='Release' -GNinja"
             run-e2e: false
             vulkan: true
             sccache: false
@@ -107,7 +107,7 @@ jobs:
           - os: "linux"
             name: "amd64-avx2-cuda-11-7"
             runs-on: "ubuntu-20-04-cuda-11-7"
-            cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE='Release' -GNinja"
+            cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE='Release' -GNinja"
             run-e2e: false
             vulkan: false
             sccache: false
@@ -116,7 +116,7 @@ jobs:
           - os: "linux"
             name: "amd64-avx-cuda-11-7"
             runs-on: "ubuntu-20-04-cuda-11-7"
-            cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_AVX2=OFF -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE='Release' -GNinja"
+            cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DGGML_AVX2=OFF -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE='Release' -GNinja"
             run-e2e: false
             vulkan: false
             sccache: false
@@ -125,7 +125,7 @@ jobs:
           - os: "linux"
             name: "amd64-avx512-cuda-11-7"
             runs-on: "ubuntu-20-04-cuda-11-7"
-            cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_AVX512=ON -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE='Release' -GNinja"
+            cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DGGML_AVX512=ON -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE='Release' -GNinja"
             run-e2e: false
             vulkan: false
             sccache: false
@@ -134,7 +134,7 @@ jobs:
           - os: "linux"
             name: "amd64-avx2-cuda-12-0"
             runs-on: "ubuntu-20-04-cuda-12-0"
-            cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE='Release' -GNinja"
+            cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE='Release' -GNinja"
             run-e2e: false
             vulkan: false
             sccache: false
@@ -143,7 +143,7 @@ jobs:
           - os: "linux"
             name: "amd64-avx-cuda-12-0"
             runs-on: "ubuntu-20-04-cuda-12-0"
-            cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_AVX2=OFF -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE='Release' -GNinja"
+            cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DGGML_AVX2=OFF -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE='Release' -GNinja"
             run-e2e: false
             vulkan: false
             sccache: false
@@ -152,7 +152,7 @@ jobs:
           - os: "linux"
             name: "amd64-avx512-cuda-12-0"
             runs-on: "ubuntu-20-04-cuda-12-0"
-            cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_AVX512=ON -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE='Release' -GNinja"
+            cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DGGML_AVX512=ON -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE='Release' -GNinja"
             run-e2e: false
             vulkan: false
             sccache: false
@@ -161,7 +161,7 @@ jobs:
           - os: "mac"
             name: "amd64"
             runs-on: "macos-13"
-            cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DBUILD_SHARED_LIBS=OFF -DGGML_METAL=OFF -DWHISPER_SDL2=ON"
+            cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DBUILD_SHARED_LIBS=OFF -DGGML_METAL=OFF -DWHISPER_SDL2=ON"
             run-e2e: true
             vulkan: false
             sccache: false
@@ -170,7 +170,7 @@ jobs:
           - os: "mac"
             name: "arm64"
             runs-on: "macos-silicon"
-            cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DBUILD_SHARED_LIBS=OFF -DGGML_METAL_EMBED_LIBRARY=ON -DWHISPER_SDL2=ON"
+            cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DBUILD_SHARED_LIBS=OFF -DGGML_METAL_EMBED_LIBRARY=ON -DWHISPER_SDL2=ON"
             run-e2e: true
             vulkan: false
             sccache: false
@@ -179,7 +179,7 @@ jobs:
           - os: "windows"
             name: "amd64-avx2"
             runs-on: "windows-2019"
-            cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_NATIVE=OFF -DWHISPER_SDL2=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER=cl -DCMAKE_C_COMPILER=cl -GNinja"
+            cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DGGML_NATIVE=OFF -DWHISPER_SDL2=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER=cl -DCMAKE_C_COMPILER=cl -GNinja"
             run-e2e: false
             vulkan: false
             sccache: false
@@ -188,7 +188,7 @@ jobs:
           - os: "windows"
             name: "amd64-avx"
             runs-on: "windows-2019"
-            cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_NATIVE=OFF -DGGML_AVX2=OFF -DWHISPER_SDL2=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER=cl -DCMAKE_C_COMPILER=cl -GNinja"
+            cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DGGML_NATIVE=OFF -DGGML_AVX2=OFF -DWHISPER_SDL2=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER=cl -DCMAKE_C_COMPILER=cl -GNinja"
             run-e2e: true
             vulkan: false
             sccache: false
@@ -197,7 +197,7 @@ jobs:
           - os: "windows"
             name: "amd64-avx512"
             runs-on: "windows-2019"
-            cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_NATIVE=OFF -DGGML_AVX512=ON -DWHISPER_SDL2=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER=cl -DCMAKE_C_COMPILER=cl -GNinja"
+            cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DGGML_NATIVE=OFF -DGGML_AVX512=ON -DWHISPER_SDL2=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER=cl -DCMAKE_C_COMPILER=cl -GNinja"
             run-e2e: false
             vulkan: false
             sccache: false
@@ -206,7 +206,7 @@ jobs:
           - os: "windows"
             name: "amd64-vulkan"
             runs-on: "windows-2019"
-            cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_NATIVE=OFF -DGGML_VULKAN=ON -DWHISPER_SDL2=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER=cl -DCMAKE_C_COMPILER=cl -GNinja"
+            cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DGGML_NATIVE=OFF -DGGML_VULKAN=ON -DWHISPER_SDL2=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER=cl -DCMAKE_C_COMPILER=cl -GNinja"
             run-e2e: false
             vulkan: true
             sccache: false
@@ -215,7 +215,7 @@ jobs:
           - os: "windows"
             name: "amd64-avx2-cuda-12-0"
             runs-on: "windows-cuda-12-0"
-            cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DWHISPER_SDL2=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CUDA_COMPILER_LAUNCHER=sccache -GNinja"
+            cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DWHISPER_SDL2=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CUDA_COMPILER_LAUNCHER=sccache -GNinja"
             run-e2e: false
             vulkan: false
             sccache: false
@@ -224,7 +224,7 @@ jobs:
           - os: "windows"
             name: "amd64-avx-cuda-12-0"
             runs-on: "windows-cuda-12-0"
-            cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_AVX2=OFF -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DWHISPER_SDL2=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CUDA_COMPILER_LAUNCHER=sccache -GNinja"
+            cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DGGML_AVX2=OFF -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DWHISPER_SDL2=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CUDA_COMPILER_LAUNCHER=sccache -GNinja"
             run-e2e: false
             vulkan: false
             sccache: false
@@ -233,7 +233,7 @@ jobs:
           - os: "windows"
             name: "amd64-avx512-cuda-12-0"
             runs-on: "windows-cuda-12-0"
-            cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_AVX512=ON -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DWHISPER_SDL2=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CUDA_COMPILER_LAUNCHER=sccache -GNinja"
+            cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DGGML_AVX512=ON -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DWHISPER_SDL2=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CUDA_COMPILER_LAUNCHER=sccache -GNinja"
             run-e2e: false
             vulkan: false
             sccache: false
@@ -242,7 +242,7 @@ jobs:
           - os: "windows"
             name: "amd64-avx2-cuda-11-7"
             runs-on: "windows-cuda-11-7"
-            cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DWHISPER_SDL2=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CUDA_COMPILER_LAUNCHER=sccache -GNinja"
+            cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DWHISPER_SDL2=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CUDA_COMPILER_LAUNCHER=sccache -GNinja"
             run-e2e: false
             vulkan: false
             sccache: false
@@ -251,7 +251,7 @@ jobs:
           - os: "windows"
             name: "amd64-avx-cuda-11-7"
             runs-on: "windows-cuda-11-7"
-            cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_AVX2=OFF -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DWHISPER_SDL2=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CUDA_COMPILER_LAUNCHER=sccache -GNinja"
+            cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DGGML_AVX2=OFF -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DWHISPER_SDL2=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CUDA_COMPILER_LAUNCHER=sccache -GNinja"
             run-e2e: false
             vulkan: false
             sccache: false
@@ -260,7 +260,7 @@ jobs:
           - os: "windows"
             name: "amd64-avx512-cuda-11-7"
             runs-on: "windows-cuda-11-7"
-            cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_AVX512=ON -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DWHISPER_SDL2=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CUDA_COMPILER_LAUNCHER=sccache -GNinja"
+            cmake-flags: "-DCORTEXAUDIO_VERSION=${{needs.create-draft-release.outputs.version}} -DGGML_AVX512=ON -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DWHISPER_SDL2=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CUDA_COMPILER_LAUNCHER=sccache -GNinja"
             run-e2e: false
             vulkan: false
             sccache: false
