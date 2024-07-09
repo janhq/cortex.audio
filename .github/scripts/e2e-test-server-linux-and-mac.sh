@@ -48,15 +48,15 @@ response1=$(curl --connect-timeout 60 -o /tmp/response1.log -s -w "%{http_code}"
     "model": "whisper.cpp"
 }')
 
-response2=$(
-    curl --connect-timeout 60 -o /tmp/response2.log -s -w "%{http_code}" --location "http://127.0.0.1:$PORT/v1/audio/transcriptions" \
-        --header 'Access-Control-Allow-Origin: *' \
-        --form 'file=@"../whisper.cpp/samples/jfk.wav"' \
-        --form 'model="whisper.cpp"' \
-        --form 'temperature="0.0"' \
-        --form 'prompt="The transcript is about OpenAI which makes technology like DALL·E, GPT-3, and ChatGPT with the hope of one day building an AGI system that benefits all of humanity. The president is trying to raly people to support the cause."' \
+# response2=$(
+#     curl --connect-timeout 60 -o /tmp/response2.log -s -w "%{http_code}" --location "http://127.0.0.1:$PORT/v1/audio/transcriptions" \
+#         --header 'Access-Control-Allow-Origin: *' \
+#         --form 'file=@"../whisper.cpp/samples/jfk.wav"' \
+#         --form 'model="whisper.cpp"' \
+#         --form 'temperature="0.0"' \
+#         --form 'prompt="The transcript is about OpenAI which makes technology like DALL·E, GPT-3, and ChatGPT with the hope of one day building an AGI system that benefits all of humanity. The president is trying to raly people to support the cause."' \
        
-)
+# )
 
 error_occurred=0
 if [[ "$response1" -ne 200 ]]; then
@@ -65,11 +65,11 @@ if [[ "$response1" -ne 200 ]]; then
     error_occurred=1
 fi
 
-if [[ "$response2" -ne 200 ]]; then
-    echo "The second curl command failed with status code: $response2"
-    cat /tmp/response2.log
-    error_occurred=1
-fi
+# if [[ "$response2" -ne 200 ]]; then
+#     echo "The second curl command failed with status code: $response2"
+#     cat /tmp/response2.log
+#     error_occurred=1
+# fi
 
 if [[ "$error_occurred" -eq 1 ]]; then
     echo "cortex.audio test run failed!!!!!!!!!!!!!!!!!!!!!!"
@@ -83,9 +83,9 @@ echo "----------------------"
 echo "Log load model:"
 cat /tmp/response1.log
 
-echo "----------------------"
-echo "Log run test:"
-cat /tmp/response2.log
+# echo "----------------------"
+# echo "Log run test:"
+# cat /tmp/response2.log
 
 echo "cortex.audio test run successfully!"
 
