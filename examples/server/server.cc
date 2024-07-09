@@ -177,7 +177,7 @@ int main(int argc, char** argv) {
           LOG_ERROR << "Save file failed";
         }
         (*req_body)[id] = temp_file_path;
-      } else if (id == "model") {
+      } else {
         (*req_body)[id] = f.content;
       }
     }
@@ -239,8 +239,8 @@ int main(int argc, char** argv) {
   svr->Post("/loadmodel", handle_load_model);
   // Use POST since httplib does not read request body for GET method
   svr->Post("/unloadmodel", handle_unload_model);
-  svr->Post("/audio/transcriptions", handle_transcriptions);
-  svr->Post("/audio/translations", handle_translations);
+  svr->Post("/v1/audio/transcriptions", handle_transcriptions);
+  svr->Post("/v1/audio/translations", handle_translations);
   svr->Post("/modelstatus", handle_get_model_status);
   svr->Get("/models", handle_get_running_models);
   std::atomic<bool> running = true;

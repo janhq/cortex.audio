@@ -105,28 +105,3 @@ else
 	cp ../../../build/libengine.dylib engines/cortex.audio/; \
 	chmod +x ../../../.github/scripts/e2e-test-server-linux-and-mac.sh && ../../../.github/scripts/e2e-test-server-linux-and-mac.sh ./server $(LLM_MODEL_URL) $(EMBEDDING_MODEL_URL);
 endif
-
-run-e2e-submodule-test:
-ifeq ($(RUN_TESTS),false)
-	@echo "Skipping tests"
-	@exit 0
-endif
-ifeq ($(OS),Windows_NT)
-	@powershell -Command "python -m pip install --upgrade pip"
-	@powershell -Command "python -m pip install requests;"
-	@powershell -Command "mkdir -p examples\server\build\engines\cortex.audio; cd examples\server\build; cp ..\..\..\build\engine.dll engines\cortex.audio; python ..\..\..\.github\scripts\e2e-test-server.py server $(LLM_MODEL_URL) $(EMBEDDING_MODEL_URL);"
-else ifeq ($(shell uname -s),Linux)
-	python -m pip install --upgrade pip;
-	python -m pip install requests;
-	@mkdir -p examples/server/build/engines/cortex.audio; \
-	cd examples/server/build/; \
-	cp ../../../build/libengine.so engines/cortex.audio/; \
-	python  ../../../.github/scripts/e2e-test-server.py server $(LLM_MODEL_URL) $(EMBEDDING_MODEL_URL);
-else
-	python -m pip install --upgrade pip;
-	python -m pip install requests;
-	@mkdir -p examples/server/build/engines/cortex.audio; \
-	cd examples/server/build/; \
-	cp ../../../build/libengine.dylib engines/cortex.audio/; \
-	python  ../../../.github/scripts/e2e-test-server.py server $(LLM_MODEL_URL) $(EMBEDDING_MODEL_URL);
-endif
