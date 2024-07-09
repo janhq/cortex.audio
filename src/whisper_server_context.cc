@@ -99,7 +99,7 @@ bool read_wav(const std::string& fname, std::vector<float>& pcmf32,
 }
 
 std::string output_str(struct whisper_context* ctx,
-                       const whisper_params& params,
+                       const WhisperParams& params,
                        std::vector<std::vector<float>> pcmf32s) {
   std::stringstream result;
   const int n_segments = whisper_full_n_segments(ctx);
@@ -183,7 +183,7 @@ bool is_file_exist(const char* fileName) {
 }
 
 void whisper_print_usage(int /*argc*/, char** argv,
-                         const whisper_params& params) {
+                         const WhisperParams& params) {
   fprintf(stderr, "\n");
   fprintf(stderr, "usage: %s [options] \n", argv[0]);
   fprintf(stderr, "\n");
@@ -298,7 +298,7 @@ void whisper_print_usage(int /*argc*/, char** argv,
   fprintf(stderr, "\n");
 }
 
-bool whisper_params_parse(int argc, char** argv, whisper_params& params) {
+bool WhisperParams_parse(int argc, char** argv, WhisperParams& params) {
   for (int i = 1; i < argc; i++) {
     std::string arg = argv[i];
 
@@ -425,8 +425,8 @@ void whisper_print_progress_callback(struct whisper_context* /*ctx*/,
                                      struct whisper_state* /*state*/,
                                      int progress, void* user_data) {
   int progress_step =
-      ((whisper_print_user_data*)user_data)->params->progress_step;
-  int* progress_prev = &(((whisper_print_user_data*)user_data)->progress_prev);
+      ((WhisperPrintUserData*)user_data)->params->progress_step;
+  int* progress_prev = &(((WhisperPrintUserData*)user_data)->progress_prev);
   if (progress >= *progress_prev + progress_step) {
     *progress_prev += progress_step;
     fprintf(stderr, "%s: progress = %3d%%\n", __func__, progress);
@@ -436,8 +436,8 @@ void whisper_print_progress_callback(struct whisper_context* /*ctx*/,
 void whisper_print_segment_callback(struct whisper_context* ctx,
                                     struct whisper_state* /*state*/, int n_new,
                                     void* user_data) {
-  const auto& params = *((whisper_print_user_data*)user_data)->params;
-  const auto& pcmf32s = *((whisper_print_user_data*)user_data)->pcmf32s;
+  const auto& params = *((WhisperPrintUserData*)user_data)->params;
+  const auto& pcmf32s = *((WhisperPrintUserData*)user_data)->pcmf32s;
 
   const int n_segments = whisper_full_n_segments(ctx);
 
@@ -507,7 +507,7 @@ void whisper_print_segment_callback(struct whisper_context* ctx,
   }
 }
 
-whisper_server_context::~whisper_server_context() {
+WhisperServerContext::~WhisperServerContext() {
   if (ctx) {
     whisper_print_timings(ctx);
     whisper_free(ctx);
@@ -515,7 +515,7 @@ whisper_server_context::~whisper_server_context() {
   }
 }
 
-bool whisper_server_context::load_model(std::string& model_path) {
+bool WhisperServerContext::LoadModel(std::string& model_path) {
   whisper_mutex.lock();
 
   // clean up
@@ -540,7 +540,7 @@ bool whisper_server_context::load_model(std::string& model_path) {
   return true;
 }
 
-std::string whisper_server_context::inference(
+std::string WhisperServerContext::Inference(
     std::string& input_file_path, std::string language, std::string prompt,
     std::string response_format, float temperature, bool translate) {
   // acquire whisper model mutex lock
@@ -629,6 +629,7 @@ std::string whisper_server_context::inference(
     wparams.max_len = params.max_len == 0 ? 60 : params.max_len;
     wparams.split_on_word = params.split_on_word;
 
+    // TODO(sang)
     // wparams.speed_up = params.speed_up;
     wparams.debug_mode = params.debug_mode;
 
@@ -646,7 +647,7 @@ std::string whisper_server_context::inference(
 
     wparams.no_timestamps = params.no_timestamps;
 
-    whisper_print_user_data user_data = {&params, &pcmf32s, 0};
+    WhisperPrintUserData user_data = {&params, &pcmf32s, 0};
 
     // this callback is called on each new segment
     if (params.print_realtime) {

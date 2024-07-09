@@ -24,7 +24,7 @@ const std::string vtt_format = "vtt";
 
 #define COMMON_SAMPLE_RATE 16000
 
-struct whisper_params {
+struct WhisperParams {
   int32_t n_threads =
       (std::min)(4, (int32_t)std::thread::hardware_concurrency());
   int32_t n_processors = 1;
@@ -82,7 +82,7 @@ bool read_wav(const std::string& fname, std::vector<float>& pcmf32,
               std::vector<std::vector<float>>& pcmf32s, bool stereo);
 
 std::string output_str(struct whisper_context* ctx,
-                       const whisper_params& params,
+                       const WhisperParams& params,
                        std::vector<std::vector<float>> pcmf32s);
 
 std::string estimate_diarization_speaker(
@@ -98,9 +98,9 @@ int timestamp_to_sample(int64_t t, int n_samples);
 bool is_file_exist(const char* fileName);
 
 void whisper_print_usage(int /*argc*/, char** argv,
-                         const whisper_params& params);
+                         const WhisperParams& params);
 
-bool whisper_params_parse(int argc, char** argv, whisper_params& params);
+bool WhisperParams_parse(int argc, char** argv, WhisperParams& params);
 
 void check_ffmpeg_availibility();
 
@@ -114,36 +114,36 @@ void whisper_print_segment_callback(struct whisper_context* ctx,
                                     struct whisper_state* /*state*/, int n_new,
                                     void* user_data);
 
-struct whisper_print_user_data {
-  const whisper_params* params;
+struct WhisperPrintUserData {
+  const WhisperParams* params;
 
   const std::vector<std::vector<float>>* pcmf32s;
   int progress_prev;
 };
 
-struct whisper_server_context {
-  whisper_params params;
-  whisper_params default_params;
+struct WhisperServerContext {
+  WhisperParams params;
+  WhisperParams default_params;
   std::mutex whisper_mutex;
   std::string model_id;
 
   struct whisper_context_params cparams;
   struct whisper_context* ctx = nullptr;
 
-  whisper_server_context() = default;  // add this line
+  WhisperServerContext() = default;  // add this line
 
   // Constructor
-  whisper_server_context(const std::string& model_id) {
+  WhisperServerContext(const std::string& model_id) {
     this->model_id = model_id;
     this->cparams = whisper_context_params();
     this->ctx = nullptr;
     // store default params so we can reset after each inference request
-    this->default_params = whisper_params();
-    this->params = whisper_params();
+    this->default_params = WhisperParams();
+    this->params = WhisperParams();
   }
 
   // Move constructor
-  whisper_server_context(whisper_server_context&& other) noexcept
+  WhisperServerContext(WhisperServerContext&& other) noexcept
       : params(std::move(other.params)),
         default_params(std::move(other.default_params)),
         whisper_mutex()  // std::mutex is not movable, so we initialize a new one
@@ -155,11 +155,11 @@ struct whisper_server_context {
             nullptr))  // ctx is a raw pointer, so we use std::exchange
   {}
 
-  bool load_model(std::string& model_path);
+  bool LoadModel(std::string& model_path);
 
-  std::string inference(std::string& input_file_path, std::string languague,
+  std::string Inference(std::string& input_file_path, std::string languague,
                         std::string prompt, std::string response_format,
                         float temperature, bool translate);
 
-  ~whisper_server_context();
+  ~WhisperServerContext();
 };

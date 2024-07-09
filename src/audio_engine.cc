@@ -198,7 +198,8 @@ void AudioEngine::UnloadModel(
     std::function<void(Json::Value&&, Json::Value&&)>&& callback) {
   auto model_id = utils::GetModelId(*json_body);
   if (CheckModelLoaded(callback, model_id)) {
-
+    server_map_.erase(model_id);
+    server_map_[model_id].model_loaded = false;
     LOG_INFO << "Model unloaded successfully";
   }
 }
@@ -270,14 +271,43 @@ bool AudioEngine::LoadModelImpl(std::shared_ptr<Json::Value> json_body) {
     }
   }
 
-  whisper_server_context whisper(model_id);
-  auto is_success = whisper.load_model(model_path.asString());
+  server_map_[model_id].ctx.model_id = model_id;
+  auto is_success = server_map_[model_id].ctx.LoadModel(model_path.asString());
   if (!is_success) {
     LOG_ERROR << "Could not load model: " << model_path.asString();
+    server_map_.erase(model_id);
     return false;
   }
 
   // Warm up the model
+  // Parse warm up audio path from request
+  if (json_body->isMember("warm_up_audio_path")) {
+    std::string warm_up_msg = "Warming up model " + model_id;
+    LOG_INFO << warm_up_msg;
+    std::string warm_up_audio_path =
+        (*json_body)["warm_up_audio_path"].asString();
+    // Return 400 error if warm up audio path is not found
+    if (!is_file_exist(warm_up_audio_path.c_str())) {
+      std::string error_msg =
+          "Warm up audio " + warm_up_audio_path +
+          " not found, please provide a valid path or don't specify it at all";
+      LOG_INFO << error_msg;
+      return false;
+    } else {
+      LOG_INFO << "Warming up model " << model_id << " with audio "
+               << warm_up_audio_path << " ...";
+      std::string warm_up_result = server_map_[model_id].ctx.Inference(
+          warm_up_audio_path, "en", "", text_format, 0, false);
+      LOG_INFO << "Warm up model " << model_id << " completed";
+    }
+  } else {
+    LOG_INFO << "No warm up audio provided, skipping warm up";
+  }
+
+  server_map_[model_id].model_loaded = true;
+  server_map_[model_id].start_time =
+      std::chrono::system_clock::now().time_since_epoch() /
+      std::chrono::milliseconds(1);
 
   return true;
 }
@@ -285,7 +315,38 @@ bool AudioEngine::LoadModelImpl(std::shared_ptr<Json::Value> json_body) {
 void AudioEngine::HandleTranscriptionImpl(
     std::shared_ptr<Json::Value> json_body,
     std::function<void(Json::Value&&, Json::Value&&)>&& callback,
-    bool translate) {}
+    bool translate) {
+  auto model_id = utils::GetModelId(*json_body);
+  auto temp_file_path = (*json_body).get("audio_file", "").asString();
+  if (temp_file_path.empty()) {
+    LOG_ERROR << "audio file not found";
+    return;
+  }
+  auto language = (*json_body).get("language", "en").asString();
+  auto prompt = (*json_body).get("prompt", "").asString();
+  auto response_format =
+      (*json_body).get("response_format", json_format).asString();
+  auto temperature = (*json_body).get("temperature", 0.0f).asFloat();
+
+  std::string result;
+  try {
+    result = server_map_[model_id].ctx.Inference(temp_file_path, language,
+                                                 prompt, response_format,
+                                                 temperature, translate);
+    auto resp_data = CreateFullReturnJson(utils::generate_random_string(20),
+                                          "_", result, "_", 0, 0);
+    Json::Value status;
+    status["is_done"] = true;
+    status["has_error"] = false;
+    status["is_stream"] = false;
+    status["status_code"] = k200OK;
+    callback(std::move(status), std::move(resp_data));
+
+    LOG_DEBUG << result;
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << '\n';
+  }
+}
 
 bool AudioEngine::CheckModelLoaded(
     std::function<void(Json::Value&&, Json::Value&&)>& callback,
@@ -315,8 +376,8 @@ bool AudioEngine::ShouldInitBackend() const {
   return false;
 }
 
-// extern "C" {
-// EngineI* get_engine() {
-//   return new AudioEngine();
-// }
-// }
+extern "C" {
+EngineI* get_engine() {
+  return new AudioEngine();
+}
+}

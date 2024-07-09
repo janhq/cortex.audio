@@ -12,7 +12,7 @@
 class Server {
  public:
   Server() {
-    dylib_ = std::make_unique<dylib>("./engines/cortex.llamacpp", "engine");
+    dylib_ = std::make_unique<dylib>("./engines/cortex.audio", "engine");
     auto func = dylib_->get_function<EngineI*()>("get_engine");
     engine_ = func();
   }
@@ -150,28 +150,51 @@ int main(int argc, char** argv) {
         });
   };
 
-  const auto handle_completions = [&](const httplib::Request& req,
-                                      httplib::Response& resp) {
+  const auto handle_transcriptions = [&](const httplib::Request& req,
+                                         httplib::Response& resp) {
     resp.set_header("Access-Control-Allow-Origin",
                     req.get_header_value("Origin"));
     auto req_body = std::make_shared<Json::Value>();
-    r.parse(req.body, *req_body);
-    bool is_stream = (*req_body).get("stream", false).asBool();
+    for (auto [id, f] : req.files) {
+      if (id == "audio_file") {
+        // Save input file to temp location
+        std::string temp_dir =
+            std::filesystem::temp_directory_path().string() + "/" +
+            std::to_string(
+                std::chrono::duration_cast<std::chrono::milliseconds>(
+                    std::chrono::system_clock::now().time_since_epoch())
+                    .count());
+        // Create the directory
+        std::filesystem::create_directory(temp_dir);
+        // Save the file to the directory, with its original name
+        std::string temp_file_path = temp_dir + "/" + f.filename;
+        std::ofstream file(temp_file_path, std::ios::binary);
+        if (file.is_open()) {
+          LOG_INFO << "Save file to " << temp_file_path;
+          file.write(f.content.c_str(), f.content.size());
+          file.close();
+        } else {
+          LOG_ERROR << "Save file failed";
+        }
+        (*req_body)[id] = temp_file_path;
+      } else if (id == "model") {
+        (*req_body)[id] = f.content;
+      }
+    }
+
+    LOG_INFO << req_body->toStyledString();
     // This is an async call, need to use queue
     auto q = std::make_shared<SyncQueue>();
-    server.engine_->HandleChatCompletion(
+    server.engine_->CreateTranscription(
         req_body, [&server, q](Json::Value status, Json::Value res) {
           q->push(std::make_pair(status, res));
         });
-    if (is_stream) {
-      process_stream_res(resp, q);
-    } else {
-      process_non_stream_res(resp, *q);
-    }
+
+    process_non_stream_res(resp, *q);
   };
 
-  const auto handle_embeddings = [&](const httplib::Request& req,
-                                     httplib::Response& resp) {
+  const auto handle_translations = [&](const httplib::Request& req,
+                                       httplib::Response& resp) {
     resp.set_header("Access-Control-Allow-Origin",
                     req.get_header_value("Origin"));
     auto req_body = std::make_shared<Json::Value>();
@@ -216,16 +239,16 @@ int main(int argc, char** argv) {
   svr->Post("/loadmodel", handle_load_model);
   // Use POST since httplib does not read request body for GET method
   svr->Post("/unloadmodel", handle_unload_model);
-  svr->Post("/v1/chat/completions", handle_completions);
-  svr->Post("/v1/embeddings", handle_embeddings);
+  svr->Post("/audio/transcriptions", handle_transcriptions);
+  svr->Post("/audio/translations", handle_translations);
   svr->Post("/modelstatus", handle_get_model_status);
   svr->Get("/models", handle_get_running_models);
   std::atomic<bool> running = true;
   svr->Delete("/destroy",
-            [&](const httplib::Request& req, httplib::Response& resp) {
-              LOG_INFO << "Received Stop command";
-              running = false;
-            });
+              [&](const httplib::Request& req, httplib::Response& resp) {
+                LOG_INFO << "Received Stop command";
+                running = false;
+              });
 
   LOG_INFO << "HTTP server listening: " << hostname << ":" << port;
   svr->new_task_queue = [] {

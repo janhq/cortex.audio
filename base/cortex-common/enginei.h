@@ -31,7 +31,8 @@ class EngineI {
   virtual bool IsSupported(const std::string& f) {
     if (f == "HandleChatCompletion" || f == "HandleEmbedding" ||
         f == "LoadModel" || f == "UnloadModel" || f == "GetModelStatus" ||
-        f == "GetModels") {
+        f == "GetModels" || f == "CreateTranscription" ||
+        f == "CreateTranslation") {
       return true;
     }
     return false;
@@ -40,5 +41,13 @@ class EngineI {
   // API to get running models.
   virtual void GetModels(
       std::shared_ptr<Json::Value> json_body,
+      std::function<void(Json::Value&&, Json::Value&&)>&& callback) = 0;
+
+  virtual void CreateTranscription(
+      std::shared_ptr<Json::Value> jsonBody,
+      std::function<void(Json::Value&&, Json::Value&&)>&& callback) = 0;
+
+  virtual void CreateTranslation(
+      std::shared_ptr<Json::Value> jsonBody,
       std::function<void(Json::Value&&, Json::Value&&)>&& callback) = 0;
 };
