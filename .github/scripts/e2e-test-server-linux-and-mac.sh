@@ -21,7 +21,7 @@ range=$((max - min + 1))
 PORT=$((RANDOM % range + min))
 
 # Start the binary file
-"$BINARY_PATH" 1 127.0.0.1 $PORT >/tmp/cortex.audio.log &
+"$BINARY_PATH" 127.0.0.1 $PORT >/tmp/cortex.audio.log &
 
 # Get the process id of the binary file
 pid=$!
