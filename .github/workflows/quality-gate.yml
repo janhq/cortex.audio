@@ -19,7 +19,7 @@ jobs:
             cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_NATIVE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE='Release' -GNinja"
             run-e2e: false
             vulkan: false
-            sccache: true
+            sccache: false
             sccache-conf-path: "/tmp/sccache.conf"
 
         #   - os: "linux"
@@ -172,7 +172,7 @@ jobs:
             cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DWHISPER_SDL2=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CUDA_COMPILER_LAUNCHER=sccache -GNinja"
             run-e2e: false
             vulkan: false
-            sccache: true
+            sccache: false
             sccache-conf-path: 'C:\sccache.conf'
 
         #   - os: "windows"
@@ -181,7 +181,7 @@ jobs:
         #     cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_AVX2=OFF -DGGML_NATIVE=OFF -DLLAMA_BUILD_SERVER=ON -DGGML_CUDA=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CUDA_COMPILER_LAUNCHER=sccache -GNinja"
         #     run-e2e: false
         #     vulkan: false
-        #     sccache: true
+        #     sccache: false
         #     sccache-conf-path: 'C:\sccache.conf'
 
         #   - os: "windows"
@@ -190,7 +190,7 @@ jobs:
         #     cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_AVX512=ON -DGGML_NATIVE=OFF -DLLAMA_BUILD_SERVER=ON -DGGML_CUDA=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CUDA_COMPILER_LAUNCHER=sccache -GNinja"
         #     run-e2e: false
         #     vulkan: false
-        #     sccache: true
+        #     sccache: false
         #     sccache-conf-path: 'C:\sccache.conf'
 
         #   - os: "windows"
@@ -199,7 +199,7 @@ jobs:
         #     cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_NATIVE=OFF -DLLAMA_BUILD_SERVER=ON -DGGML_CUDA=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CUDA_COMPILER_LAUNCHER=sccache -GNinja"
         #     run-e2e: false
         #     vulkan: false
-        #     sccache: true
+        #     sccache: false
         #     sccache-conf-path: 'C:\sccache.conf'
 
         #   - os: "windows"
@@ -208,7 +208,7 @@ jobs:
         #     cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_AVX2=OFF -DGGML_NATIVE=OFF -DLLAMA_BUILD_SERVER=ON -DGGML_CUDA=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CUDA_COMPILER_LAUNCHER=sccache -GNinja"
         #     run-e2e: false
         #     vulkan: false
-        #     sccache: true
+        #     sccache: false
         #     sccache-conf-path: 'C:\sccache.conf'
 
         #   - os: "windows"
@@ -217,7 +217,7 @@ jobs:
         #     cmake-flags: "-DCORTEXAUDIO_VERSION=${{github.event.pull_request.head.sha}} -DGGML_AVX512=ON -DGGML_NATIVE=OFF -DLLAMA_BUILD_SERVER=ON -DGGML_CUDA=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE='Release' -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CUDA_COMPILER_LAUNCHER=sccache -GNinja"
         #     run-e2e: false
         #     vulkan: false
-        #     sccache: true
+        #     sccache: false
         #     sccache-conf-path: 'C:\sccache.conf'
 
     steps:
@@ -246,12 +246,7 @@ jobs:
             echo 'server_side_encryption = false' >> ${{ matrix.sccache-conf-path }}
             echo 'no_credentials = false' >> ${{ matrix.sccache-conf-path }}
 
-        - name: Fetch SDL2 on Windows
-          if: runner.os == 'Windows'
-          run: |
-            C:/msys64/usr/bin/wget.exe -qO sdl2.zip https://github.com/libsdl-org/SDL/releases/download/release-2.28.5/SDL2-devel-2.28.5-VC.zip
-            7z x sdl2.zip -aoa
-            echo "SDL2_DIR=$env:GITHUB_WORKSPACE/SDL2-2.28.5/cmake" >> $env:GITHUB_ENV
+        
         
         - name: Install SDL2 on MacOS
           if: runner.os == 'macOS'
@@ -264,6 +259,14 @@ jobs:
           if: runner.os == 'Windows'
           run: |
             choco install make sccache ninja -y
+            choco install wget -y --force
+        
+        - name: Fetch SDL2 on Windows
+          if: runner.os == 'Windows'
+          run: |
+            C:\ProgramData\chocolatey\lib\Wget\tools\wget.exe -qO sdl2.zip https://github.com/libsdl-org/SDL/releases/download/release-2.28.5/SDL2-devel-2.28.5-VC.zip
+            7z x sdl2.zip -aoa
+            echo "SDL2_DIR=$env:GITHUB_WORKSPACE/SDL2-2.28.5/cmake" >> $env:GITHUB_ENV
           
         - name: Install ninja build on Linux
           if: runner.os == 'Linux'
