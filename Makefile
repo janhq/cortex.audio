@@ -1,4 +1,4 @@
-# Makefile for Cortex llamacpp engine - Build, Lint, Test, and Clean
+# Makefile for Cortex audio engine - Build, Lint, Test, and Clean
 
 CMAKE_EXTRA_FLAGS ?= ""
 RUN_TESTS ?= false
@@ -53,13 +53,13 @@ endif
 
 pre-package:
 ifeq ($(OS),Windows_NT)
-	@powershell -Command "mkdir -p cortex.llamacpp; cp build\engine.dll cortex.llamacpp\;"
+	@powershell -Command "mkdir -p cortex.audio; cp build\engine.dll cortex.audio\;"
 else ifeq ($(shell uname -s),Linux)
-	@mkdir -p cortex.llamacpp; \
-	cp build/libengine.so cortex.llamacpp/;
+	@mkdir -p cortex.audio; \
+	cp build/libengine.so cortex.audio/;
 else
-	@mkdir -p cortex.llamacpp; \
-	cp build/libengine.dylib cortex.llamacpp/;
+	@mkdir -p cortex.audio; \
+	cp build/libengine.dylib cortex.audio/;
 endif
 
 codesign:
@@ -70,21 +70,21 @@ endif
 
 ifeq ($(OS),Windows_NT)
 	@powershell -Command "dotnet tool install --global AzureSignTool;"
-	@powershell -Command 'azuresigntool.exe sign -kvu "$(AZURE_KEY_VAULT_URI)" -kvi "$(AZURE_CLIENT_ID)" -kvt "$(AZURE_TENANT_ID)" -kvs "$(AZURE_CLIENT_SECRET)" -kvc "$(AZURE_CERT_NAME)" -tr http://timestamp.globalsign.com/tsa/r6advanced1 -v ".\cortex.llamacpp\engine.dll";'
+	@powershell -Command 'azuresigntool.exe sign -kvu "$(AZURE_KEY_VAULT_URI)" -kvi "$(AZURE_CLIENT_ID)" -kvt "$(AZURE_TENANT_ID)" -kvs "$(AZURE_CLIENT_SECRET)" -kvc "$(AZURE_CERT_NAME)" -tr http://timestamp.globalsign.com/tsa/r6advanced1 -v ".\cortex.audio\engine.dll";'
 else ifeq ($(shell uname -s),Linux)
 	@echo "Skipping Code Sign for linux"
 	@exit 0
 else
-	find "cortex.llamacpp" -type f -exec codesign --force -s "$(DEVELOPER_ID)" --options=runtime {} \;
+	find "cortex.audio" -type f -exec codesign --force -s "$(DEVELOPER_ID)" --options=runtime {} \;
 endif
 
 package:
 ifeq ($(OS),Windows_NT)
-	@powershell -Command "7z a -ttar temp.tar cortex.llamacpp\*; 7z a -tgzip cortex.llamacpp.tar.gz temp.tar;"
+	@powershell -Command "7z a -ttar temp.tar cortex.audio\*; 7z a -tgzip cortex.audio.tar.gz temp.tar;"
 else ifeq ($(shell uname -s),Linux)
-	@tar -czvf cortex.llamacpp.tar.gz cortex.llamacpp;
+	@tar -czvf cortex.audio.tar.gz cortex.audio;
 else
-	@tar -czvf cortex.llamacpp.tar.gz cortex.llamacpp;
+	@tar -czvf cortex.audio.tar.gz cortex.audio;
 endif
 
 run-e2e-test:
@@ -93,16 +93,16 @@ ifeq ($(RUN_TESTS),false)
 	@exit 0
 endif
 ifeq ($(OS),Windows_NT)
-	@powershell -Command "mkdir -p examples\server\build\engines\cortex.llamacpp; cd examples\server\build; cp ..\..\..\build\engine.dll engines\cortex.llamacpp; ..\..\..\.github\scripts\e2e-test-server-windows.bat server.exe $(LLM_MODEL_URL) $(EMBEDDING_MODEL_URL);"
+	@powershell -Command "mkdir -p examples\server\build\engines\cortex.audio; cd examples\server\build; cp ..\..\..\build\engine.dll engines\cortex.audio; ..\..\..\.github\scripts\e2e-test-server-windows.bat server.exe $(LLM_MODEL_URL) $(EMBEDDING_MODEL_URL);"
 else ifeq ($(shell uname -s),Linux)
-	@mkdir -p examples/server/build/engines/cortex.llamacpp; \
+	@mkdir -p examples/server/build/engines/cortex.audio; \
 	cd examples/server/build/; \
-	cp ../../../build/libengine.so engines/cortex.llamacpp/; \
+	cp ../../../build/libengine.so engines/cortex.audio/; \
 	chmod +x ../../../.github/scripts/e2e-test-server-linux-and-mac.sh && ../../../.github/scripts/e2e-test-server-linux-and-mac.sh ./server $(LLM_MODEL_URL) $(EMBEDDING_MODEL_URL);
 else
-	@mkdir -p examples/server/build/engines/cortex.llamacpp; \
+	@mkdir -p examples/server/build/engines/cortex.audio; \
 	cd examples/server/build/; \
-	cp ../../../build/libengine.dylib engines/cortex.llamacpp/; \
+	cp ../../../build/libengine.dylib engines/cortex.audio/; \
 	chmod +x ../../../.github/scripts/e2e-test-server-linux-and-mac.sh && ../../../.github/scripts/e2e-test-server-linux-and-mac.sh ./server $(LLM_MODEL_URL) $(EMBEDDING_MODEL_URL);
 endif
 
@@ -114,19 +114,19 @@ endif
 ifeq ($(OS),Windows_NT)
 	@powershell -Command "python -m pip install --upgrade pip"
 	@powershell -Command "python -m pip install requests;"
-	@powershell -Command "mkdir -p examples\server\build\engines\cortex.llamacpp; cd examples\server\build; cp ..\..\..\build\engine.dll engines\cortex.llamacpp; python ..\..\..\.github\scripts\e2e-test-server.py server $(LLM_MODEL_URL) $(EMBEDDING_MODEL_URL);"
+	@powershell -Command "mkdir -p examples\server\build\engines\cortex.audio; cd examples\server\build; cp ..\..\..\build\engine.dll engines\cortex.audio; python ..\..\..\.github\scripts\e2e-test-server.py server $(LLM_MODEL_URL) $(EMBEDDING_MODEL_URL);"
 else ifeq ($(shell uname -s),Linux)
 	python -m pip install --upgrade pip;
 	python -m pip install requests;
-	@mkdir -p examples/server/build/engines/cortex.llamacpp; \
+	@mkdir -p examples/server/build/engines/cortex.audio; \
 	cd examples/server/build/; \
-	cp ../../../build/libengine.so engines/cortex.llamacpp/; \
+	cp ../../../build/libengine.so engines/cortex.audio/; \
 	python  ../../../.github/scripts/e2e-test-server.py server $(LLM_MODEL_URL) $(EMBEDDING_MODEL_URL);
 else
 	python -m pip install --upgrade pip;
 	python -m pip install requests;
-	@mkdir -p examples/server/build/engines/cortex.llamacpp; \
+	@mkdir -p examples/server/build/engines/cortex.audio; \
 	cd examples/server/build/; \
-	cp ../../../build/libengine.dylib engines/cortex.llamacpp/; \
+	cp ../../../build/libengine.dylib engines/cortex.audio/; \
 	python  ../../../.github/scripts/e2e-test-server.py server $(LLM_MODEL_URL) $(EMBEDDING_MODEL_URL);
 endif
