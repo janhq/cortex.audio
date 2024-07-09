@@ -2,8 +2,7 @@
 
 CMAKE_EXTRA_FLAGS ?= ""
 RUN_TESTS ?= false
-LLM_MODEL_URL ?= "https://delta.jan.ai/tinyllama-1.1b-chat-v0.3.Q2_K.gguf"
-EMBEDDING_MODEL_URL ?= "https://catalog.jan.ai/dist/models/embeds/nomic-embed-text-v1.5.f16.gguf"
+WHISPER_MODEL_URL ?= https://delta.jan.ai/ggml-tiny-q5_1.bin
 CODE_SIGN ?= false
 AZURE_KEY_VAULT_URI ?= xxxx
 AZURE_CLIENT_ID ?= xxxx
@@ -54,6 +53,7 @@ endif
 pre-package:
 ifeq ($(OS),Windows_NT)
 	@powershell -Command "mkdir -p cortex.audio; cp build\engine.dll cortex.audio\;"
+	@powershell -Command "cp SDL2-2.28.5\lib\2.28.5\SDL2.dll cortex.audio\;"
 else ifeq ($(shell uname -s),Linux)
 	@mkdir -p cortex.audio; \
 	cp build/libengine.so cortex.audio/;
@@ -93,15 +93,15 @@ ifeq ($(RUN_TESTS),false)
 	@exit 0
 endif
 ifeq ($(OS),Windows_NT)
-	@powershell -Command "mkdir -p examples\server\build\engines\cortex.audio; cd examples\server\build; cp ..\..\..\build\engine.dll engines\cortex.audio; ..\..\..\.github\scripts\e2e-test-server-windows.bat server.exe $(LLM_MODEL_URL) $(EMBEDDING_MODEL_URL);"
+	@powershell -Command "mkdir -p examples\server\build\engines\cortex.audio; cp SDL2-2.28.5\lib\2.28.5\SDL2.dll examples\server\build\; cd examples\server\build\; cp ..\..\..\build\engine.dll engines\cortex.audio; ..\..\..\.github\scripts\e2e-test-server-windows.bat server.exe $(WHISPER_MODEL_URL);"
 else ifeq ($(shell uname -s),Linux)
 	@mkdir -p examples/server/build/engines/cortex.audio; \
 	cd examples/server/build/; \
 	cp ../../../build/libengine.so engines/cortex.audio/; \
-	chmod +x ../../../.github/scripts/e2e-test-server-linux-and-mac.sh && ../../../.github/scripts/e2e-test-server-linux-and-mac.sh ./server $(LLM_MODEL_URL) $(EMBEDDING_MODEL_URL);
+	chmod +x ../../../.github/scripts/e2e-test-server-linux-and-mac.sh && ../../../.github/scripts/e2e-test-server-linux-and-mac.sh ./server $(WHISPER_MODEL_URL);
 else
 	@mkdir -p examples/server/build/engines/cortex.audio; \
 	cd examples/server/build/; \
 	cp ../../../build/libengine.dylib engines/cortex.audio/; \
-	chmod +x ../../../.github/scripts/e2e-test-server-linux-and-mac.sh && ../../../.github/scripts/e2e-test-server-linux-and-mac.sh ./server $(LLM_MODEL_URL) $(EMBEDDING_MODEL_URL);
+	chmod +x ../../../.github/scripts/e2e-test-server-linux-and-mac.sh && ../../../.github/scripts/e2e-test-server-linux-and-mac.sh ./server $(WHISPER_MODEL_URL);
 endif

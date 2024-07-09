@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## Example run command
-# ./linux-and-mac.sh './jan/plugins/@janhq/inference-plugin/dist/nitro/nitro_mac_arm64' https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v0.3-GGUF/resolve/main/tinyllama-1.1b-chat-v0.3.Q2_K.gguf
+# ./linux-and-mac.sh './jan/plugins/@janhq/inference-plugin/dist/cortex.audio/nitro_mac_arm64' https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v0.3-GGUF/resolve/main/tinyllama-1.1b-chat-v0.3.Q2_K.gguf
 
 # Check for required arguments
 if [[ $# -ne 2 ]]; then
@@ -9,7 +9,7 @@ if [[ $# -ne 2 ]]; then
     exit 1
 fi
 
-rm /tmp/response1.log /tmp/response2.log /tmp/nitro.log
+rm /tmp/response1.log /tmp/response2.log /tmp/cortex.audio.log
 
 BINARY_PATH=$1
 DOWNLOAD_URL=$2
@@ -21,14 +21,14 @@ range=$((max - min + 1))
 PORT=$((RANDOM % range + min))
 
 # Start the binary file
-"$BINARY_PATH" 1 127.0.0.1 $PORT >/tmp/nitro.log &
+"$BINARY_PATH" 1 127.0.0.1 $PORT >/tmp/cortex.audio.log &
 
 # Get the process id of the binary file
 pid=$!
 
 if ! ps -p $pid >/dev/null; then
-    echo "nitro failed to start. Logs:"
-    cat /tmp/nitro.log
+    echo "cortex.audio failed to start. Logs:"
+    cat /tmp/cortex.audio.log
     exit 1
 fi
 
@@ -41,18 +41,18 @@ if [[ ! -f "/tmp/testwhisper" ]]; then
 fi
 
 # Run the curl commands
-response1=$(curl --connect-timeout 60 -o /tmp/response1.log -s -w "%{http_code}" --location "http://127.0.0.1:$PORT/load_model" \
+response1=$(curl --connect-timeout 60 -o /tmp/response1.log -s -w "%{http_code}" --location "http://127.0.0.1:$PORT/loadmodel" \
     --header 'Content-Type: application/json' \
     --data '{
     "model_path": "/tmp/testwhisper",
-    "model_id": "whisper.cpp"
+    "model": "whisper.cpp"
 }')
 
 response2=$(
     curl --connect-timeout 60 -o /tmp/response2.log -s -w "%{http_code}" --location "http://127.0.0.1:$PORT/v1/audio/transcriptions" \
         --header 'Access-Control-Allow-Origin: *' \
         --form 'file=@"../whisper.cpp/samples/jfk.wav"' \
-        --form 'model_id="whisper.cpp"' \
+        --form 'model="whisper.cpp"' \
         --form 'temperature="0.0"' \
         --form 'prompt="The transcript is about OpenAI which makes technology like DALL·E, GPT-3, and ChatGPT with the hope of one day building an AGI system that benefits all of humanity. The president is trying to raly people to support the cause."' \
        
@@ -74,7 +74,7 @@ fi
 if [[ "$error_occurred" -eq 1 ]]; then
     echo "cortex.audio test run failed!!!!!!!!!!!!!!!!!!!!!!"
     echo "cortex.audio Error Logs:"
-    cat /tmp/nitro.log
+    cat /tmp/cortex.audio.log
     kill $pid
     exit 1
 fi
