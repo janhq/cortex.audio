@@ -53,7 +53,7 @@ endif
 pre-package:
 ifeq ($(OS),Windows_NT)
 	@powershell -Command "mkdir -p cortex.audio; cp build\engine.dll cortex.audio\;"
-	@powershell -Command "cp SDL2-2.28.5\lib\2.28.5\SDL2.dll cortex.audio\;"
+	@powershell -Command "cp SDL2-2.28.5\lib\x64\SDL2.dll cortex.audio\;"
 else ifeq ($(shell uname -s),Linux)
 	@mkdir -p cortex.audio; \
 	cp build/libengine.so cortex.audio/;
@@ -93,7 +93,7 @@ ifeq ($(RUN_TESTS),false)
 	@exit 0
 endif
 ifeq ($(OS),Windows_NT)
-	@powershell -Command "mkdir -p examples\server\build\engines\cortex.audio; cp SDL2-2.28.5\lib\2.28.5\SDL2.dll examples\server\build\; cd examples\server\build\; cp ..\..\..\build\engine.dll engines\cortex.audio; ..\..\..\.github\scripts\e2e-test-server-windows.bat server.exe $(WHISPER_MODEL_URL);"
+	@powershell -Command "mkdir -p examples\server\build\engines\cortex.audio; cp SDL2-2.28.5\lib\x64\SDL2.dll examples\server\build\; cd examples\server\build\; cp ..\..\..\build\engine.dll engines\cortex.audio; ..\..\..\.github\scripts\e2e-test-server-windows.bat server.exe $(WHISPER_MODEL_URL);"
 else ifeq ($(shell uname -s),Linux)
 	@mkdir -p examples/server/build/engines/cortex.audio; \
 	cd examples/server/build/; \

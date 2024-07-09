@@ -318,7 +318,7 @@ void AudioEngine::HandleTranscriptionImpl(
     std::function<void(Json::Value&&, Json::Value&&)>&& callback,
     bool translate) {
   auto model_id = utils::GetModelId(*json_body);
-  auto temp_file_path = (*json_body).get("audio_file", "").asString();
+  auto temp_file_path = (*json_body).get("file", "").asString();
   if (temp_file_path.empty()) {
     LOG_ERROR << "audio file not found";
     return;

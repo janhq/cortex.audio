@@ -156,7 +156,8 @@ int main(int argc, char** argv) {
                     req.get_header_value("Origin"));
     auto req_body = std::make_shared<Json::Value>();
     for (auto [id, f] : req.files) {
-      if (id == "audio_file") {
+      LOG_INFO << id;
+      if (id == "file") {
         // Save input file to temp location
         std::string temp_dir =
             std::filesystem::temp_directory_path().string() + "/" +
